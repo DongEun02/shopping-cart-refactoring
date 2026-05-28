@@ -1,23 +1,27 @@
 import { Product } from "./product.js";
+import { ProductRepository } from "./product.repository.js";
 
 export class ProductService {
-  private readonly products: Product[] = [];
+  constructor(private readonly repository: ProductRepository) {}
 
-  save({ name, price }: { name: string; price: number }): Product {
-    const product = new Product(this.products.length + 1, name, price);
-    this.products.push(product);
+  async save({
+    name,
+    price,
+  }: {
+    name: string;
+    price: number;
+  }): Promise<Product> {
+    const id = (await this.repository.count()) + 1;
+    const product = new Product(id, name, price);
+    await this.repository.save(product);
     return product;
   }
 
-  findAll(): Product[] {
-    return this.products;
+  async findAll(): Promise<Product[]> {
+    return this.repository.findAll();
   }
 
-  delete(id: number): void {
-    const index = this.products.findIndex((p) => p.id === id);
-    if (index === -1) {
-      throw new Error("상품을 찾을 수 없습니다");
-    }
-    this.products.splice(index, 1);
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
   }
 }
