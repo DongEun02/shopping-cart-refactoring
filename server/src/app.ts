@@ -9,13 +9,7 @@ interface Product {
   price: number;
 }
 
-interface CartItem {
-  productId: number;
-  quantity: number;
-}
-
 const products: Product[] = [];
-const cart: CartItem[] = [];
 
 // 상품 목록 조회
 app.get("/products", (req, res) => {
